@@ -1117,51 +1117,50 @@ header{
 				}
 			}
 
-			document.addEventListener('visibilitychange', () => {
+				document.addEventListener('visibilitychange', () => {
 
-				if (document.visibilityState !== 'visible') return;
+		if (document.visibilityState !== 'visible') return;
 
-				if (!navigator.permissions || !navigator.permissions.query) return;
+		if (!navigator.permissions || !navigator.permissions.query) return;
 
-				navigator.permissions.query({
-					name: 'geolocation'
-				}).then(res => {
+		navigator.permissions.query({
+			name: 'geolocation'
+		}).then(res => {
 
-					state.geoPermission = res.state;
+			state.geoPermission = res.state;
 
-					const guide = document.getElementById('locationGuide');
+			const guide = document.getElementById('locationGuide');
 
-					if (res.state === 'denied') {
+			if (res.state === 'denied') {
 
-						state.userDenied = true;
+				state.userDenied = true;
 
-						if (
-							guide &&
-							window.innerWidth < 768 &&
-							!state.guideDismissed
-						) {
-							guide.style.display = 'block';
-						}
+				if (
+					guide &&
+					window.innerWidth < 768 &&
+					!state.guideDismissed
+				) {
+					guide.style.display = 'block';
+				}
 
-					} else {
+			} else {
 
-						state.userDenied = false;
+				state.userDenied = false;
 
-						if (guide) {
-							guide.style.display = 'none';
-						}
+				if (guide) {
+					guide.style.display = 'none';
+				}
 
-						locate({
-							silent: true,
-							recenter: false
-						}).catch(() => {});
-
-					}
-
+				locate({
+					silent: true,
+					recenter: false
 				}).catch(() => {});
 
-			});
+			}
 
+		}).catch(() => {});
+
+	});
 	</script>
 </body>
 
