@@ -867,270 +867,257 @@ header{
 document.getElementById('locateBtn')
 .addEventListener('click', () => {
 
-    state.dismissedPermissionModal = false;
-
-    locate({
-        silent:false,
-        recenter:true
-    })
-    .catch(() => {
+    if (state.geoPermission !== 'granted') {
 
         openSettingModal();
 
-    });
+        return;
+    }
+
+    locate();
 
 });
-		document.getElementById('toggleFilter').addEventListener('click', () =>
-			togglePanel());
-		document.getElementById('overlay').addEventListener('click', () =>
-			togglePanel(false));
-		document.getElementById('themeBtn').addEventListener(
-			'click', () => {
-				currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-				localStorage.setItem(THEME_KEY, currentTheme);
-				applyTheme(currentTheme);
-			});
-		document.getElementById('selectAll').addEventListener('click', () => {
-			document.querySelectorAll('#catList input').forEach(cb => {
-				cb.checked = true;
-				state.active.add(cb.dataset.id);
-				cb.closest('.cat-item').classList.remove('off');
-			});
-			applyFilter();
-		});
-		document.getElementById('clearAll').addEventListener('click', () => {
-			document.querySelectorAll('#catList input').forEach(cb => {
-				cb.checked = false;
-				cb.closest('.cat-item').classList.add('off');
-			});
-			state.active.clear();
-			applyFilter();
-		});
 
-		// OS設定変更時の自動追従リスナーを無効化（デフォルト白固定のため）
-		/*
-		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
-		  if (!localStorage.getItem(THEME_KEY)){
-		    currentTheme = e.matches ? 'dark' : 'light';
-		    applyTheme(currentTheme);
-		  }
-		});
-		*/
-
-		fetch('pois.json')
-			.then(r => {
-				if (!r.ok) throw new Error('pois.json 読み込みエラー (' + r.status + ')');
-				return r.json();
-			})
-			.then(data => {
-				state.categories = data.categories || [];
-				state.pois = (data.pois || []).filter(p =>
-					p.spot && typeof p.spot.latitude === 'number' && typeof p.spot.longitude ===
-					'number'
-				);
-				state.categories.forEach(c => state.active.add(String(c.category_id)));
-				renderCategories();
-				renderMarkers();
-
-				const b = L.latLngBounds(state.pois.map(p => [p.spot.latitude, p.spot.longitude]));
-				if (b.isValid()) {
-					map.fitBounds(b, {
-						padding: [40, 40]
+				document.getElementById('toggleFilter').addEventListener('click', () =>
+					togglePanel());
+				document.getElementById('overlay').addEventListener('click', () =>
+					togglePanel(false));
+				document.getElementById('themeBtn').addEventListener(
+					'click', () => {
+						currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+						localStorage.setItem(THEME_KEY, currentTheme);
+						applyTheme(currentTheme);
 					});
-					state.hasFitInitial = true;
-				}
-				document.getElementById('loading').style.display = 'none';
-
-				initGeoByPermission();
-			})
-			.catch(err => {
-				document.getElementById('loading').textContent = 'Error: ' + err.message;
-				console.error(err);
-			});
-
-		function openSettingModal() {
-
-			// PCなら表示しない
-			if (window.innerWidth >= 768) return;
-
-			const m = document.getElementById('settingModal');
-			if (!m) return;
-			m.classList.add('show');
-			m.setAttribute('aria-hidden', 'false');
-		}
-
-		function closeSettingModal() {
-			const m = document.getElementById('settingModal');
-			if (!m) return;
-			m.classList.remove('show');
-			m.setAttribute('aria-hidden', 'true');
-		}
-
-
-		　　
-
-		document.getElementById('settingCancel')
-			.addEventListener('click', () => {
-
-				state.dismissedPermissionModal = true;
-
-				closeSettingModal();
-
-			});
-
-
-		document.getElementById('closeGuideBtn')
-			.addEventListener('click', () => {
-
-				state.guideDismissed = true;
-
-				const guide =
-					document.getElementById('locationGuide');
-
-				if (guide) {
-
-					guide.style.display = 'none';
-
-					requestAnimationFrame(() => {
-						map.invalidateSize();
+				document.getElementById('selectAll').addEventListener('click', () => {
+					document.querySelectorAll('#catList input').forEach(cb => {
+						cb.checked = true;
+						state.active.add(cb.dataset.id);
+						cb.closest('.cat-item').classList.remove('off');
 					});
-
-				}
-
-			});
-
-
-		document.getElementById(
-			'settingGo').addEventListener('click', () => {
-			window.open(
-				'https://drop.machiapps.com/nakanoshima/location-permissions/',
-				'_blank', 'noopener,noreferrer');
-		});
-
-		document.getElementById('settingModal').addEventListener('click', (e) => {
-			if (e.target.id === 'settingModal') closeSettingModal();
-		});
-
-		function tryAutoLocate() {
-			locate({
-				silent: true,
-				recenter: true
-			}).then(ll => {
-				try {
-					const b = L.latLngBounds(state.pois.map(p => [p.spot.latitude, p.spot.longitude]));
-					if (b.isValid() && b.pad(0.5).contains(ll)) {
-						map.setView(ll, Math.max(15, map.getZoom()), {
-							animate: true
-						});
-					}
-				} catch (_) {}
-			}).catch(() => {});
-		}
-
-
-		function initGeoByPermission() {
-			if (!navigator.geolocation) return;
-
-			if (navigator.permissions && navigator.permissions.query) {
-
-				navigator.permissions.query({
-					name: 'geolocation'
-				}).then(res => {
-
-					state.geoPermission = res.state;
-
-					const guide = document.getElementById('locationGuide');
-
-					// 初回表示時
-					if (res.state === 'denied') {
-
-						state.userDenied = true;
-
-
-						if (
-							guide &&
-							window.innerWidth < 768 &&
-							!state.guideDismissed
-						) {
-							guide.style.display = 'block';
-						}
-
-						if (!state.dismissedPermissionModal) {
-							openSettingModal();
-						}
-
-					} else {
-
-						state.userDenied = false;
-
-						if (guide && state.geoPermission === 'granted') {
-							guide.style.display = 'none';
-							requestAnimationFrame(() => {
-								map.invalidateSize();
-							});
-
-
-						}
-
-						tryAutoLocate();
-					}
-
-					// 権限変更監視
-					res.onchange = () => {
-
-						state.geoPermission = res.state;
-
-						if (res.state === 'denied') {
-
-							state.userDenied = true;
-
-
-							if (
-								guide &&
-								window.innerWidth < 768 &&
-								!state.guideDismissed
-							) {
-								guide.style.display = 'block';
-							}
-
-
-							　　　　　　　　　　　　　　
-
-							if (!state.dismissedPermissionModal) {
-								openSettingModal();
-							}
-
-						} else {
-
-							state.userDenied = false;
-
-							if (guide && state.geoPermission === 'granted') {
-								guide.style.display = 'none';
-
-
-								requestAnimationFrame(() => {
-									map.invalidateSize();
-								});
-
-							}
-
-							locate({
-								silent: true,
-								recenter: false
-							}).catch(() => {});
-						}
-					};
-
-				}).catch(() => {
-					tryAutoLocate();
+					applyFilter();
+				});
+				document.getElementById('clearAll').addEventListener('click', () => {
+					document.querySelectorAll('#catList input').forEach(cb => {
+						cb.checked = false;
+						cb.closest('.cat-item').classList.add('off');
+					});
+					state.active.clear();
+					applyFilter();
 				});
 
-			} else {
-				tryAutoLocate();
-			}
-		}
+				// OS設定変更時の自動追従リスナーを無効化（デフォルト白固定のため）
+				/*
+				window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e=>{
+				  if (!localStorage.getItem(THEME_KEY)){
+				    currentTheme = e.matches ? 'dark' : 'light';
+				    applyTheme(currentTheme);
+				  }
+				});
+				*/
 
-		document.addEventListener('visibilitychange', () => {
+				fetch('pois.json')
+					.then(r => {
+						if (!r.ok) throw new Error('pois.json 読み込みエラー (' + r.status + ')');
+						return r.json();
+					})
+					.then(data => {
+						state.categories = data.categories || [];
+						state.pois = (data.pois || []).filter(p =>
+							p.spot && typeof p.spot.latitude === 'number' && typeof p.spot.longitude ===
+							'number'
+						);
+						state.categories.forEach(c => state.active.add(String(c.category_id)));
+						renderCategories();
+						renderMarkers();
+
+						const b = L.latLngBounds(state.pois.map(p => [p.spot.latitude, p.spot.longitude]));
+						if (b.isValid()) {
+							map.fitBounds(b, {
+								padding: [40, 40]
+							});
+							state.hasFitInitial = true;
+						}
+						document.getElementById('loading').style.display = 'none';
+
+						initGeoByPermission();
+					})
+					.catch(err => {
+						document.getElementById('loading').textContent = 'Error: ' + err.message;
+						console.error(err);
+					});
+
+				function openSettingModal() {
+
+					// PCなら表示しない
+					if (window.innerWidth >= 768) return;
+
+					const m = document.getElementById('settingModal');
+					if (!m) return;
+					m.classList.add('show');
+					m.setAttribute('aria-hidden', 'false');
+				}
+
+				function closeSettingModal() {
+					const m = document.getElementById('settingModal');
+					if (!m) return;
+					m.classList.remove('show');
+					m.setAttribute('aria-hidden', 'true');
+				}
+
+
+				　　
+				document.getElementById('settingCancel')
+					.addEventListener('click', () => {
+
+						state.dismissedPermissionModal = true;
+
+						closeSettingModal();
+
+					});
+
+
+				document.getElementById('closeGuideBtn')
+.addEventListener('click', () => {
+
+    state.guideDismissed = true;
+
+    const guide = document.getElementById('locationGuide');
+
+    if (guide) {
+        guide.style.display = 'none';
+
+        requestAnimationFrame(() => {
+            map.invalidateSize();
+        });
+    }
+
+});  
+
+						document.getElementById(
+							'settingGo').addEventListener('click', () => {
+							window.open(
+								'https://drop.machiapps.com/nakanoshima/location-permissions/',
+								'_blank', 'noopener,noreferrer');
+						});
+
+						document.getElementById('settingModal').addEventListener('click', (e) => {
+							if (e.target.id === 'settingModal') closeSettingModal();
+						});
+
+						function tryAutoLocate() {
+							locate({
+								silent: true,
+								recenter: true
+							}).then(ll => {
+								try {
+									const b = L.latLngBounds(state.pois.map(p => [p.spot.latitude, p.spot
+										.longitude
+									]));
+									if (b.isValid() && b.pad(0.5).contains(ll)) {
+										map.setView(ll, Math.max(15, map.getZoom()), {
+											animate: true
+										});
+									}
+								} catch (_) {}
+							}).catch(() => {});
+						}
+
+
+						function initGeoByPermission() {
+							if (!navigator.geolocation) return;
+
+							if (navigator.permissions && navigator.permissions.query) {
+
+								navigator.permissions.query({
+									name: 'geolocation'
+								}).then(res => {
+
+									state.geoPermission = res.state;
+
+									const guide = document.getElementById('locationGuide');
+
+									// 初回表示時
+									if (res.state === 'denied') {
+
+										state.userDenied = true;
+
+
+										if (guide && window.innerWidth < 768) {
+											guide.style.display = 'block';
+										}
+
+
+										if (!state.dismissedPermissionModal) {
+											openSettingModal();
+										}
+
+
+									} else {
+
+										state.userDenied = false;
+
+										if (guide && state.geoPermission === 'granted') {
+											guide.style.display = 'none';
+											requestAnimationFrame(() => {
+												map.invalidateSize();
+											});
+
+
+										}
+
+										tryAutoLocate();
+									}
+
+									// 権限変更監視
+									res.onchange = () => {
+
+										state.geoPermission = res.state;
+
+										if (res.state === 'denied') {
+
+											state.userDenied = true;
+
+
+											if (guide && window.innerWidth < 768) {
+												guide.style.display = 'block';
+											}
+
+
+											if (!state.dismissedPermissionModal) {
+												openSettingModal();
+											}
+
+										} else {
+
+											state.userDenied = false;
+
+											if (guide && state.geoPermission === 'granted') {
+												guide.style.display = 'none';
+
+
+												requestAnimationFrame(() => {
+													map.invalidateSize();
+												});
+
+											}
+
+											locate({
+												silent: true,
+												recenter: false
+											}).catch(() => {});
+										}
+									};
+
+								}).catch(() => {
+									tryAutoLocate();
+								});
+
+							} else {
+								tryAutoLocate();
+							}
+						}
+
+						document.addEventListener('visibilitychange', () => {
 
     if (document.visibilityState !== 'visible') return;
 
@@ -1176,47 +1163,41 @@ document.getElementById('locateBtn')
 });
 
 
-			if (!navigator.permissions || !navigator.permissions.query) return;
+							if (!navigator.permissions || !navigator.permissions.query) return;
 
-			navigator.permissions.query({
-				name: 'geolocation'
-			}).then(res => {
+							navigator.permissions.query({
+								name: 'geolocation'
+							}).then(res => {
 
-				state.geoPermission = res.state;
+								state.geoPermission = res.state;
 
-				const guide = document.getElementById('locationGuide');
+								const guide = document.getElementById('locationGuide');
 
-				if (res.state === 'denied') {
+								if (res.state === 'denied') {
 
-					state.userDenied = true;
+									state.userDenied = true;
 
-					
-if (
-    guide &&
-    window.innerWidth < 768 &&
-    !state.guideDismissed
-){
-    guide.style.display = 'block';
-}
+									if (guide && window.innerWidth < 768) {
+										guide.style.display = 'block';
+									}
 
+								} else {
 
-				} else {
+									state.userDenied = false;
 
-					state.userDenied = false;
+									if (guide && state.geoPermission === 'granted') {
+										guide.style.display = 'none';
+									}
 
-					if (guide && state.geoPermission === 'granted') {
-						guide.style.display = 'none';
-					}
+									locate({
+										silent: true,
+										recenter: false
+									}).catch(() => {});
+								}
 
-					locate({
-						silent: true,
-						recenter: false
-					}).catch(() => {});
-				}
-
-			}).catch(() => {});
-		});
-	})();
+							}).catch(() => {});
+						});
+					})();
 
 	</script>
 </body>
