@@ -863,9 +863,22 @@ header{
 			setTimeout(() => map.invalidateSize(), 300);
 		}
 
-		document.getElementById('locateBtn').addEventListener('click', () => {
-			locate();
-		});
+		document.getElementById('locateBtn')
+.addEventListener('click', () => {
+
+    locate({
+        silent:false,
+        recenter:true
+    })
+    .catch(() => {
+
+        if (!state.dismissedPermissionModal) {
+            openSettingModal();
+        }
+
+    });
+
+});
 		document.getElementById('toggleFilter').addEventListener('click', () =>
 			togglePanel());
 		document.getElementById('overlay').addEventListener('click', () =>
