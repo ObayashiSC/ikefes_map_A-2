@@ -1158,9 +1158,15 @@ position:fixed;
 
 					state.userDenied = true;
 
-					if (guide && window.innerWidth < 768) {
-						guide.style.display = 'block';
-					}
+					
+if (
+    guide &&
+    window.innerWidth < 768 &&
+    !state.guideDismissed
+){
+    guide.style.display = 'block';
+}
+
 
 				} else {
 
