@@ -1069,99 +1069,99 @@ document.getElementById('locateBtn')
 									}
 
 									// 権限変更監視
-									res.onchange = () => {
+				res.onchange = () => {
 
-										state.geoPermission = res.state;
+					state.geoPermission = res.state;
 
-										if (res.state === 'denied') {
+					if (res.state === 'denied') {
 
-											state.userDenied = true;
-
-
-											if (guide && window.innerWidth < 768) {
-												guide.style.display = 'block';
-											}
+						state.userDenied = true;
 
 
-											if (!state.dismissedPermissionModal) {
-												openSettingModal();
-											}
-
-										} else {
-
-											state.userDenied = false;
-
-											if (guide && state.geoPermission === 'granted') {
-												guide.style.display = 'none';
-
-
-												requestAnimationFrame(() => {
-													map.invalidateSize();
-												});
-
-											}
-
-											locate({
-												silent: true,
-												recenter: false
-											}).catch(() => {});
-										}
-									};
-
-								}).catch(() => {
-									tryAutoLocate();
-								});
-
-							} else {
-								tryAutoLocate();
-							}
+						if (guide && window.innerWidth < 768) {
+							guide.style.display = 'block';
 						}
 
-						document.addEventListener('visibilitychange', () => {
 
-    if (document.visibilityState !== 'visible') return;
+						if (!state.dismissedPermissionModal) {
+							openSettingModal();
+						}
 
-    if (!navigator.permissions || !navigator.permissions.query) return;
+					} else {
 
-    navigator.permissions.query({
-        name: 'geolocation'
-    }).then(res => {
+						state.userDenied = false;
 
-        state.geoPermission = res.state;
+						if (guide && state.geoPermission === 'granted') {
+							guide.style.display = 'none';
 
-        const guide = document.getElementById('locationGuide');
 
-        if (res.state === 'denied') {
+							requestAnimationFrame(() => {
+								map.invalidateSize();
+							});
 
-            state.userDenied = true;
+						}
 
-            if (
-                guide &&
-                window.innerWidth < 768 &&
-                !state.guideDismissed
-            ) {
-                guide.style.display = 'block';
-            }
+						locate({
+							silent: true,
+							recenter: false
+						}).catch(() => {});
+					}
+				};
 
-        } else {
+			}).catch(() => {
+				tryAutoLocate();
+			});
 
-            state.userDenied = false;
+		} else {
+			tryAutoLocate();
+		}
+	}
 
-            if (guide) {
-                guide.style.display = 'none';
-            }
+	document.addEventListener('visibilitychange', () => {
 
-            locate({
-                silent:true,
-                recenter:false
-            }).catch(() => {});
+		if (document.visibilityState !== 'visible') return;
 
-        }
+		if (!navigator.permissions || !navigator.permissions.query) return;
 
-    }).catch(() => {});
+		navigator.permissions.query({
+			name: 'geolocation'
+		}).then(res => {
 
-});
-	</script>
+			state.geoPermission = res.state;
+
+			const guide = document.getElementById('locationGuide');
+
+			if (res.state === 'denied') {
+
+				state.userDenied = true;
+
+				if (
+					guide &&
+					window.innerWidth < 768 &&
+					!state.guideDismissed
+				) {
+					guide.style.display = 'block';
+				}
+
+			} else {
+
+				state.userDenied = false;
+
+				if (guide) {
+					guide.style.display = 'none';
+				}
+
+				locate({
+					silent: true,
+					recenter: false
+				}).catch(() => {});
+
+			}
+
+		}).catch(() => {});
+
+	});
+		</script>
 </body>
 
 </html>
