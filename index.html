@@ -383,6 +383,22 @@ position:fixed;
   z-index:9500;
 
 }
+		
+.guide-close{
+    position:absolute;
+    right:8px;
+    top:6px;
+
+    border:none;
+    background:none;
+
+    color:var(--ink);
+
+    font-size:18px;
+    cursor:pointer;
+    padding:0 4px;
+}
+
 
 
 	
@@ -460,24 +476,20 @@ position:fixed;
 		</defs>
 	</svg>
 	<div id="app">
-		
-<div id="locationGuide" class="location-guide" style="display:none;">
 
-    <button id="closeGuideBtn" class="guide-close">
-        ×
-    </button>
+		<div id="locationGuide" class="location-guide" style="display:none;">
 
-    マップ上に現在地が表示されない場合、
-    スマートフォンの位置情報設定をご確認ください。
-    設定方法は
-    <a href="https://drop.machiapps.com/nakanoshima/location-permissions/"
-       target="_blank"
-       rel="noopener noreferrer">
+			<button id="closeGuideBtn" class="guide-close">
+				×
+			</button>
+
+			マップ上に現在地が表示されない場合、 スマートフォンの位置情報設定をご確認ください。 設定方法は
+			<a href="https://drop.machiapps.com/nakanoshima/location-permissions/" target="_blank"
+			rel="noopener noreferrer">
        こちら
-    </a>
-    をご覧ください。
+    </a> をご覧ください。
 
-</div>
+		</div>
 
 		<header>
 			<div class="brand">
@@ -950,6 +962,27 @@ position:fixed;
 				state.dismissedPermissionModal = true;
 
 				closeSettingModal();
+
+			});
+
+
+		document.getElementById('closeGuideBtn')
+			.addEventListener('click', () => {
+
+				state.guideDismissed = true;
+
+				const guide =
+					document.getElementById('locationGuide');
+
+				if (guide) {
+
+					guide.style.display = 'none';
+
+					requestAnimationFrame(() => {
+						map.invalidateSize();
+					});
+
+				}
 
 			});
 
