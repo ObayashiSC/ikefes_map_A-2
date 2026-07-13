@@ -609,6 +609,8 @@ header{
 				hasFitInitial: false,
 				geoPermission: 'unknown',
 				userDenied: false,
+
+				guideClosed: false
 			};
 
 			function escapeHtml(s) {
@@ -1112,8 +1114,11 @@ header{
 		});
 	})();
 		
+
 document.getElementById('closeGuideBtn')
 ?.addEventListener('click', () => {
+
+    state.guideClosed = true;
 
     const guide = document.getElementById('locationGuide');
 
@@ -1122,6 +1127,7 @@ document.getElementById('closeGuideBtn')
     }
 
 });
+
 
 
 	</script>
