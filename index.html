@@ -1050,35 +1050,7 @@ header{
 				tryAutoLocate();
 			}
 		}
-
-		document.addEventListener('visibilitychange', () => {
-
-			if (document.visibilityState !== 'visible') return;
-
-
-			setTimeout(() => {
-				locate({
-					silent: true,
-					recenter: false
-				}).catch(() => {});
-			}, 500);
-
-			setTimeout(() => {
-				locate({
-					silent: true,
-					recenter: false
-				}).catch(() => {});
-			}, 1500);
-
-			setTimeout(() => {
-				locate({
-					silent: true,
-					recenter: false
-				}).catch(() => {});
-			}, 3000);
-
-
-			if (!navigator.permissions || !navigator.permissions.query) return;
+if (!navigator.permissions || !navigator.permissions.query) return;
 
 			navigator.permissions.query({
 				name: 'geolocation'
