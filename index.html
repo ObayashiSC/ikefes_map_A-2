@@ -398,9 +398,13 @@ header{
     cursor:pointer;
     padding:0 4px;
 }
+		
+
+body.guide-open .leaflet-bottom {
+    bottom: 60px !important;
+}
 
 
-	
 	.location-guide a{
 	  color:#0066cc;
 	  text-decoration:underline;
@@ -792,6 +796,7 @@ header{
 
     if (guide && !state.userDenied) {
         guide.style.display = 'none';
+		document.body.classList.remove('guide-open');
 
         requestAnimationFrame(() => {
             map.invalidateSize();
@@ -814,6 +819,7 @@ header{
 
 								if (guide && window.innerWidth < 768) {
 									guide.style.display = 'block';
+									document.body.classList.add('guide-open');
 								}
 
 								openSettingModal();
@@ -986,6 +992,7 @@ header{
 
 						if (guide && window.innerWidth < 768) {
 							guide.style.display = 'block';
+							document.body.classList.add('guide-open');
 						}
 
 						openSettingModal();
@@ -995,6 +1002,7 @@ header{
 
 						if (guide && !state.userDenied) {
 							guide.style.display = 'none';
+							document.body.classList.remove('guide-open');
 							requestAnimationFrame(() => {
 								map.invalidateSize();
 							});
@@ -1017,6 +1025,7 @@ header{
 
 							if (guide && window.innerWidth < 768) {
 								guide.style.display = 'block';
+								document.body.classList.add('guide-open');
 							}
 
 							　　　　　　　　　　　　　　
@@ -1027,6 +1036,7 @@ header{
 
 							if (guide && !state.userDenied) {
 								guide.style.display = 'none';
+								document.body.classList.remove('guide-open');
 
 
 								requestAnimationFrame(() => {
@@ -1059,6 +1069,7 @@ document.getElementById('closeGuideBtn')
 
     if (guide) {
         guide.style.display = 'none';
+		document.body.classList.remove('guide-open');
     }
 
 });
