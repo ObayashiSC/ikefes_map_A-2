@@ -812,7 +812,7 @@ header{
 
 								const guide = document.getElementById('locationGuide');
 
-								if (guide && window.innerWidth < 768) {
+								if (guide && window.innerWidth < 768 && !state.guideClosed) {
 									guide.style.display = 'block';
 								}
 
@@ -984,7 +984,7 @@ header{
 						state.userDenied = true;
 
 
-						if (guide && window.innerWidth < 768) {
+						if (guide && window.innerWidth < 768 && !state.guideClosed) {
 							guide.style.display = 'block';
 						}
 
@@ -1015,7 +1015,7 @@ header{
 							state.userDenied = true;
 
 
-							if (guide && window.innerWidth < 768) {
+							if (guide && window.innerWidth < 768 && !state.guideClosed) {
 								guide.style.display = 'block';
 							}
 
