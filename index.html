@@ -1111,6 +1111,18 @@ header{
 			}).catch(() => {});
 		});
 	})();
+		
+document.getElementById('closeGuideBtn')
+?.addEventListener('click', () => {
+
+    const guide = document.getElementById('locationGuide');
+
+    if (guide) {
+        guide.style.display = 'none';
+    }
+
+});
+
 
 	</script>
 </body>
