@@ -331,7 +331,7 @@ header{
 	  #loading{
 	    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
 	    background:var(--bg); border:1px solid var(--line);
-	    padding:18px 28px; z-index:2000;
+	    padding:18px ; z-index:2000;
 	    font-family:var(--mono); font-size:11px; letter-spacing:.2em;
 	    text-transform:uppercase; color:var(--ink-2);
 	  }
@@ -345,7 +345,7 @@ header{
 	  #overlay.show{opacity:1; pointer-events:auto;}
 	
 	  .map-controls{
-	    position:absolute; right:14px; bottom:calc(28px + var(--safe-bottom));
+	    position:absolute; right:14px; bottom:calc(80px + var(--safe-bottom));
 	    display:flex; flex-direction:column; gap:8px; z-index:1000;
 	  }
 	  .map-controls .icon-btn{
@@ -474,11 +474,25 @@ header{
 			</symbol>
 		</defs>
 	</svg>
-	<div id="app">
-		<div id="locationGuide" class="location-guide" style="display:none;">マップ上に現在地が表示されない場合、スマートフォンの位置情報設定をご確認ください。設定方法は
-			<a href="https://drop.machiapps.com/nakanoshima/location-permissions/" target="_blank"
-			rel="noopener noreferrer">こちら </a>をご覧ください。
-		</div>
+	
+<div id="locationGuide" class="location-guide" style="display:none;">
+
+  <button id="closeGuideBtn" class="guide-close">
+    ×
+  </button>
+
+  マップ上に現在地が表示されない場合、
+  スマートフォンの位置情報設定をご確認ください。
+  設定方法は
+  <a href="https://drop.machiapps.com/nakanoshima/location-permissions/"
+     target="_blank"
+     rel="noopener noreferrer">
+     こちら
+  </a>
+  をご覧ください。
+
+</div>
+
 		<header>
 			<div class="brand">
 				<svg class="mark">
