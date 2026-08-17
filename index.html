@@ -73,28 +73,11 @@ header{
 
   background:var(--bg);
   border-bottom:1px solid var(--line);
+  padding:11px 14px;
   display:flex;
-  flex-direction:column;
+  align-items:center;
+  gap:8px;
 }
-  .header-main{
-    padding:11px 14px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .header-notice{
-    padding:7px 14px;
-    border-top:1px solid var(--line);
-    text-align:center;
-    font-size:11px;
-    line-height:1.5;
-    color:var(--ink);
-  }
-  .header-notice a{
-    color:#4da3ff;
-    text-decoration:underline;
-    font-weight:500;
-  }
 
 
 	  .brand{display:flex; align-items:baseline; gap:9px; flex:1; min-width:0;}
@@ -114,6 +97,20 @@ header{
 	  @media (max-width:540px){
 	    .brand .sub{display:none;}
 	    .brand h1{font-size:17px;}
+	  }
+
+	  .drop-link{
+	    flex-shrink:0;
+	    font-size:11px;
+	    color:#4da3ff;
+	    text-decoration:underline;
+	    font-weight:500;
+	    white-space:nowrap;
+	    letter-spacing:.02em;
+	  }
+	  .drop-link:hover{opacity:.8;}
+	  @media (max-width:540px){
+	    .drop-link{font-size:10px;}
 	  }
 	
 	  .icon-btn{
@@ -485,29 +482,25 @@ header{
 	</svg>
 	<div id="app">
 			<header>
-			<div class="header-main">
-					<div class="brand">
-						<svg class="mark">
-							<use href="#i-logo" />
-						</svg>
-						<h1>OPEN HOUSE OSAKA 2026</h1>
-						<span class="sub">生きた建築ミュージアムフェスティバル大阪2025</span>
-					</div>
-					<button class="icon-btn" id="themeBtn" title="表示切替" aria-label="テーマ切替">
-						<svg id="themeIcon">
-							<use href="#i-moon" />
-						</svg>
-					</button>
-					<button class="icon-btn" id="toggleFilter" title="カテゴリ" aria-label="カテゴリ">
-						<svg>
-							<use href="#i-menu" />
-						</svg>
-					</button>
-				</div>
-				<div class="header-notice">
-					建物の詳細は、みんまちDROPでご覧いただけます。<a href="https://drop.machiapps.com/collab/story/detail/?mood=ikefes-2026&amp;page=event" target="_blank" rel="noopener noreferrer">みんまちDROP</a>についてはこちらからご確認ください。
-				</div>
-			</header>
+			<div class="brand">
+				<svg class="mark">
+					<use href="#i-logo" />
+				</svg>
+				<h1>OPEN HOUSE OSAKA 2026</h1>
+				<span class="sub">生きた建築ミュージアムフェスティバル大阪2025</span>
+			</div>
+			<a class="drop-link" href="https://drop.machiapps.com/collab/story/detail/?mood=ikefes-2026&amp;page=event" target="_blank" rel="noopener noreferrer">みんまちDROPについて詳しく知る</a>
+			<button class="icon-btn" id="themeBtn" title="表示切替" aria-label="テーマ切替">
+				<svg id="themeIcon">
+					<use href="#i-moon" />
+				</svg>
+			</button>
+			<button class="icon-btn" id="toggleFilter" title="カテゴリ" aria-label="カテゴリ">
+				<svg>
+					<use href="#i-menu" />
+				</svg>
+			</button>
+		</header>
 		<div id="locationGuide" class="location-guide" style="display:none;">
 
 			<button id="closeGuideBtn" class="guide-close">
